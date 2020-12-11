@@ -18,8 +18,3 @@ The publication links research on corpus linguistics, language typology and cogn
 
 To be posted shortly.
 
-### Code
-
-To be added shortly.
-
-### References
