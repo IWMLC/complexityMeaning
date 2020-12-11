@@ -1,10 +1,10 @@
 ---
-title: 'Appendix I: Simulation Study with Normal Distribution and Location Shift'
+title: 'Appendix 1: Simulation Study with Normal Distribution and Location Shift'
 author: "Chris Bentz"
-date: "November 30, 2020"
+date: "December 11, 2020"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
   word_document: default
 ---
 
@@ -24,13 +24,17 @@ library(rstatix)
 Create vectors of random numbers from the standard normal distribution with mu = 0 and SD = 1. These are the pseudo-measurements of complexity for languages A, B, and C. Language A and B are generated from the same sampling procedure, while language C has a location shift of one standard deviation towards higher values.
 ```{r}
 n = 20 # choose number of pseudo-measurements
+# set the seed for random number generation in order to get the same result when the code is re-run
+set.seed(1)
+# generate values for language A
+langA.values <- rnorm(n)
+# generate values for language B
+langB.values <- rnorm(n)
+# generate values for language C with location shift (1 standard deviation)
+langC.values <- rnorm(n) + 1 
 
-set.seed(1) # set the seed for random number generation in order to get the same result when the code is re-run
-langA.values <- rnorm(n) # generate values for language A
-langB.values <- rnorm(n) # generate values for language B
-langC.values <- rnorm(n) + 1 # generate values for language C with location shift (1 standard deviation)
-
-value <- c(langA.values, langB.values, langC.values) # concatenate to get long format data frame
+# concatenate to get long format data frame
+value <- c(langA.values, langB.values, langC.values) 
 measurement <- rep(c(1:n), times = 3)
 language <- c(rep("Language A", times = n), rep("Language B", times = n), 
               rep("Language C", times = n))
@@ -54,12 +58,13 @@ sdev <- ddply(simulation.df, "language", summarise, grp.sd = sd(value, na.rm = T
 
 Plot density distributions with indication of median (mean) values.
 ```{r, fig.width = 7, fig.height = 2.5}
-density.plot <- ggplot(simulation.df, aes(x = value)) + 
+density.plot <- ggplot(simulation.df, aes(x = value)) +
+ # histograms could be added as well here (or instead of the density distributions)
  # geom_histogram(aes(y = ..density..), colour = "white", fill = "light grey",
-                # binwidth = 0.1) + # histograms could be added as well here (or instead of the density distributions)
+                # binwidth = 0.1) + 
  geom_density(alpha = .2, fill = "grey", color = "darkgrey") +
  geom_jitter(data = simulation.df, aes(x = value, y = 0), 
-             size = 1, height = 0.03, width = 0) + # add some jitter to prevent overplotting of dots
+             size = 1, height = 0.03, width = 0) + # add some jitter to prevent overplotting
  facet_wrap(~ language) +
  # geom_vline(data = mu, aes(xintercept=grp.mean),
  #          linetype = "dotted", color = "blue") +
@@ -84,7 +89,8 @@ Give an overview of mean, median, and standard deviation values (i.e. values ref
 stats.df <- cbind(mu, med[, 2], sdev[, 2])
 colnames(stats.df) <- c("language", "mu", "med", "sdev")
 stats.df.sorted <- stats.df[order(-stats.df$med),]
-stats.df.sorted[, -1] <- round(stats.df.sorted[, -1], 2) # round values to two decimal places,  the "-1" excludes column 1
+# round values to two decimal places,  the "-1" excludes column 1
+stats.df.sorted[, -1] <- round(stats.df.sorted[, -1], 2) 
 print(stats.df.sorted)
 ```
 

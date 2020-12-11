@@ -1,8 +1,10 @@
 ---
-title: "Brownian Motion Simulation"
+title: "Appendix 2: Brownian Motion Simulation"
 author: "Chris Bentz"
-date: "November 30, 2020"
-output: html_document
+date: "December 11, 2020"
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -38,7 +40,8 @@ We here simulate the evolution of trait values (i.e. pseudo-complexity values in
 sig2 = 0.01 # this variance setting is copied from Revell (2016) 
 # define number of BM simulations
 nsim = 20
-# set the seed for random number generation in order to get the same result when the code is re-run
+# set the seed for random number generation in order to get the same result
+# when the code is re-run
 set.seed(1)
 # simulate Brownian motion on a tree with fastBM()
 simulation <- fastBM(tree, mu = 0, sig2 = sig2, internal = F, nsim = nsim)
@@ -47,7 +50,8 @@ simulation <- fastBM(tree, mu = 0, sig2 = sig2, internal = F, nsim = nsim)
 # Correlation Plots
 It is expected that the trait values for taxa which form a clade (i.e. language A and B) are positively correlated due to the shared history. While for trait values of taxa without shared history (i.e. language A and C and language B and C) there is no correlation expected. This can be checked with a correlation plot. Importantly, however, this does not mean that language A and B are expected to have average trait values which are different from the average trait value of C.
 ```{r, width = 4, height = 5}
-simulation.df <- as.data.frame(t(simulation)) # the t() function is transposing the rows and columns
+simulation.df <- as.data.frame(t(simulation)) 
+# the t() function is transposing the rows and columns
 cor.plot <- ggpairs(simulation.df, 
                         lower = list(continuous = wrap("smooth_loess", size = 1)), 
                         upper = list(continuous = wrap('cor', method = "spearman"))) +
@@ -84,11 +88,12 @@ sdev <- ddply(simulation.df.long, "language", summarise, grp.sd = sd(value, na.r
 Plot density distributions with indication of median (mean) values.
 ```{r, fig.width = 7, fig.height = 2.5}
 density.plot <- ggplot(simulation.df.long, aes(x = value)) + 
+ # histograms could be added as well here (or instead of the density distributions)
  # geom_histogram(aes(y = ..density..), colour = "white", fill = "light grey",
-                # binwidth = 0.1) + # histograms could be added as well here (or instead of the density distributions)
+                # binwidth = 0.1) + 
  geom_density(alpha = .2, fill = "grey", color = "darkgrey") +
  geom_jitter(data = simulation.df.long, aes(x = value, y = 0), 
-             size = 1, height = 0.1, width = 0) + # add some jitter to prevent overplotting of dots
+             size = 1, height = 0.1, width = 0) + # add some jitter to prevent overplotting 
  facet_wrap(~ language) +
  # geom_vline(data = mu, aes(xintercept=grp.mean),
  #          linetype = "dotted", color = "blue") +
@@ -113,7 +118,8 @@ Give an overview of mean, median, and standard deviation values (i.e. values ref
 stats.df <- cbind(mu, med[, 2], sdev[, 2])
 colnames(stats.df) <- c("language", "mu", "med", "sdev")
 stats.df.sorted <- stats.df[order(-stats.df$med), ]
-stats.df.sorted[, -1] <- round(stats.df.sorted[, -1], 2) # round values to two decimal places,  the "-1" excludes column 1
+# round values to two decimal places,  the "-1" excludes column 1
+stats.df.sorted[, -1] <- round(stats.df.sorted[, -1], 2) 
 print(stats.df.sorted)
 ```
 

@@ -1,11 +1,11 @@
 ---
-title: 'Complexity Differences: Meta-Analyses'
+title: 'Appendix 3: Meta-Analyses of Kolmogorov Complexity'
 author: "Chris Bentz"
-date: "November 30, 2020"
+date: "December 11, 2020"
 output:
-html_document: default
-pdf_document: default
-word_document: default
+  pdf_document: default
+  html_document: default
+  word_document: default
 ---
   
 ```{r setup, include=FALSE}
@@ -25,7 +25,8 @@ library(rstatix)
 # Load Data
 Load data file with morphological complexity estimations. These stem from an earlier project applying measures related to Kolmogorov complexity to parallel texts of "Alice in Wonderland". The data stems from the so-called "semi-parallel" analyses. In order to assess the variance of complexity estimations for different parts of the corpora, 10% of the sentences of each corpus were randomly drawn (this was repeated 1000 times). For further descriptions see Ehret & Szmrecsanyi (2016). 
 ```{r, message = FALSE}
-results <- read.csv("~/Rstudio_code/IWMLC_Meaningfulness/semialice_morphratios.csv") # the path to the file semialice_morphratios.csv needs to be individually specified here.
+# the path to the file semialice_morphratios.csv needs to be individually specified here.
+results <- read.csv("~/Rstudio_code/IWMLC_Meaningfulness/semialice_morphratios.csv") 
 ```
 
 Give some simple statistics for this data frame of results.
@@ -103,7 +104,8 @@ Give an overview of mean, median, and standard deviation values (i.e. values ref
 stats.df <- cbind(mu, med[, 2], sdev[, 2])
 colnames(stats.df) <- c("language", "mu", "med", "sdev")
 stats.df.sorted <- stats.df[order(-stats.df$med),]
-stats.df.sorted[, -1] <- round(stats.df.sorted[, -1], 2) # round values to two decimal places,  the "-1" excludes column 1
+# round values to two decimal places,  the "-1" excludes column 1
+stats.df.sorted[, -1] <- round(stats.df.sorted[, -1], 2) 
 print(stats.df.sorted)
 ```
 
