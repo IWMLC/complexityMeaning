@@ -9,18 +9,17 @@
 
 This repository comprises the data, scripts and additional statistics for the interpreation of complexity measures as described in the related publication
 
-* Ehret, Katharina, Alice Blumenthal-Dramé, Christian Bentz and Aleksandrs Berdicevskis (in preparation). "Meaning and measures: Interpreting and evaluating the meaning of complexity metrics." 
+* Ehret, Katharina, Alice Blumenthal-Dramé, Christian Bentz and Aleksandrs Berdicevskis (submitted). "Meaning and measures: Interpreting and evaluating the meaning of complexity metrics." 
 
-The publication links research on corpus linguistics, language typology and cognitive linguistics research, and specifically contributes to the sociolinguistic-typological debate on language complexity. 
+The publication links research on corpus linguistics, language typology and cognitive linguistics research, and specifically contributes to the sociolinguistic-typological debate on language complexity. This debate has to a very large extent been motivated by the question of whether all languages are equally complex, and if not, which language-external parameters affect the distribution of complexity across languages. To address this and other questions, a panoply of different metrics and approaches has been put forward to measure the complexity of languages and language varieties. Against this backdrop the publication addresses three major gaps in the literature by discussing statistical, theoretical and methodological problems related to the interpretation of complexity measures.
 
-ADD SOME MORE DETAIL HERE.
 
 ### Overview and description of folders and files
 
-Describe if applicable. 
+To be posted shortly.
 
 ### Code
 
-Insert code with examples etc. if applicable
+To be added shortly.
 
 ### References
