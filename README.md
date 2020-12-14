@@ -7,7 +7,7 @@
 
 ### Description
 
-This repository comprises the data, scripts and additional statistics for the interpreation of complexity measures as described in the related publication
+This repository comprises the data, scripts and additional statistics for the interpretation of complexity measures as described in the related publication
 
 * Ehret, Katharina, Alice Blumenthal-Dramé, Christian Bentz and Aleksandrs Berdicevskis (submitted). "Meaning and measures: Interpreting and evaluating the meaning of complexity metrics." 
 
@@ -18,32 +18,34 @@ The publication links research on corpus linguistics, language typology and cogn
 
 ## Folders
 
-* Figures
+# Figures
 
-A folder with all figures from the three case studies described in the related publication. Figures are available as pdf and eps.
+A folder with all figures from the three case studies described in the related publication. Figures are available in pdf and eps format.
 
-* Tables
+# Tables
 
 A folder comprising three csv files with general descriptive statistics (mean, median, standard deviation) for the data presented in the three case studies. 
 
-## Files
+## Files 
 
-* BrownianMtion_simulation.Rmd
+# BrownianMotion_simulation.Rmd
 
-R code and instructions for data generation and analysis of case study 1 with Brownian motion.
+R code and instructions for data generation, figures, and analysis presented case study 1 with Brownian motion.
 
-* IWMLC_SimulationStudy.Rmd
+# IWMLC_SimulationStudy.Rmd
 
-R code and instructions for data generation and analysis of case study 2, a simulation including one location shift.
+R code and instructions for data generation, figures, and analysis presented in case study 2, a simulation including one location shift.
 
-* Kolmogorov_Metaanalyses.Rmd
+# Kolmogorov_Metaanalyses.Rmd
 
-R code and instructions for the analysis of case study 3 on the Kolmogorov-based morphological complexity across ten languages. 
+R code and instructions for the figures and analysis presented in case study 3 on Kolmogorov-based morphological complexity across ten languages. 
 
-* semialice_morphratios.csv
+# semialice_morphratios.csv
 
 Kolmogorov-based morphological complexity ratios for ten languages of *Alice's adventures in Wonderland*. This is a subset of the data presented and described in [Ehret & Szmrecsanyi (2016)](http://www.benszm.net/omnibuslit/Ehret_Szmrecsanyi_2016_proofs.pdf).
 
+
+All files are also available as PDF.
 
 
 
