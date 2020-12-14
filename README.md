@@ -42,7 +42,7 @@ R code and instructions for the analysis of case study 3 on the Kolmogorov-based
 
 * semialice_morphratios.csv
 
-Kolmogorov-based morphological complexity ratios for ten languages of *Alice's adventures in Wonderland* (a subset of the data presented and described in [Ehret & Szmrecsanyi 2016] (http://www.benszm.net/omnibuslit/Ehret_Szmrecsanyi_2016_proofs.pdf)).
+Kolmogorov-based morphological complexity ratios for ten languages of *Alice's adventures in Wonderland*. This is a subset of the data presented and described in [Ehret & Szmrecsanyi 2016](http://www.benszm.net/omnibuslit/Ehret_Szmrecsanyi_2016_proofs.pdf).
 
 
 
