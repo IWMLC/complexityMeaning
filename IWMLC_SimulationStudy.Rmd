@@ -1,7 +1,7 @@
 ---
 title: 'Appendix 1: Simulation Study with Normal Distribution and Location Shift'
 author: "Chris Bentz"
-date: "December 11, 2020"
+date: "January 12, 2021"
 output:
   pdf_document: default
   html_document: default
@@ -100,7 +100,7 @@ write.csv(stats.df.sorted, file = "Tables/simulation_descriptiveStats.csv", row.
 ```
 
 # Normality
-The assumption that the tested data stems from a normally distributed population is often necessary for the mathematical proofs underlying standard statistical techniques. We might apply normality tests to check for this assumption (e.g. Baayen 2008, p. 73), but some statisticians advice against such pre-tests, since they are often too sensitive (MacDonald 2014, p. 133-136, Rasch et al. (2020), p. 67). In fact, Rasch et al. (2020, p. xi) argue based on earlier simulation studies that almost all standard statistical tests are fairly robust against deviations from normality. However, it is still advisable to check for gross deviations from normality in the data. One common way of doing this is quantile-quantile plots. The points should here roughly follow a straight line (Crawley 2007, p. 281).
+The assumption that the tested data stems from a normally distributed population is often necessary for the mathematical proofs underlying standard statistical techniques. We might apply normality tests to check for this assumption (e.g. Baayen 2008, p. 73), but some statisticians advice against such pre-tests, since they are often too sensitive (MacDonald 2014, p. 133-136, Rasch et al. (2020), p. 67). In fact, Rasch et al. (2020, p. xi) argue based on earlier simulation studies that almost all standard statistical tests are fairly robust against deviations from normality. In a similar vein, Lumley et al. (2009) argue that non-normality of the data is a negligible issue with the t-test, at least for larger sample sizes, e.g. >= 100. However, especially for smaller sample sizes, it is still advisable to check for gross deviations from normality in the data. One common way of doing this is quantile-quantile plots. The points should here roughly follow a straight line (Crawley 2007, p. 281).
 
 ```{r, fig.width = 3.5, fig.height = 3}
 ggplot(simulation.df, aes(sample = value)) + stat_qq()
@@ -171,6 +171,8 @@ Cahusac, P. M. B. (2021). Evidence-based statistics. John Wiley & Sons.
 Crawley, M. J. (2007). The R book. John Wiley & Sons Ltd.
 
 Kruschke, J. K. (2012). Bayesian estimation supersedes the t test. Journal of Experimental Psychology.
+
+Lumley et al. (2002). The importants of the normality assumption in large public health data sets. Annu. Rev. Public Health.
 
 McDonald, J.H. (2014). Handbook of Biological Statistics (3rd ed.). Sparky House Publishing, Baltimore, Maryland. online at http://www.biostathandbook.com
 
