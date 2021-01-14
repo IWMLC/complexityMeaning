@@ -1,10 +1,10 @@
 ---
 title: "Appendix 2: Brownian Motion Simulation"
 author: "Chris Bentz"
-date: "December 11, 2020"
+date: "January 14, 2021"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -24,12 +24,19 @@ library(rstatix)
 ```
 
 # Phylogenetic Tree
-Provide a phylogenetic tree. We here build a simple tree with three taxa ``manually'' by supplying a text string in Newick format.  
-```{r, fig.width = 4, fig.height = 4}
-# create Newick tree as text string
-text.string <- "(Language_C:10, (Language_B:1, Language_A:1):9);"
-tree <- read.tree(text = text.string) # conversion to object of type ``list'' 
-plot(tree)
+We here use an Indo-European phylogenetic tree from Bentz et al. (2018), which was built by using lexical items from word lists of the Automated Similarity Judgment Program (ASJP). For details on how such phylogenetic trees are automatically built see Jäger (2018). 
+
+```{r, fig.width = 5, fig.height = 5}
+# load phylogenetic tree in newick format as a text file
+tree <- read.newick("/home/chris/IENewickTree.txt")
+# choose the languages which are supposed to remain on the phylogeny
+languages <- c("'Swedish [i-swe]'","'Dutch [i-nld]'","'Romanian [i-ron]'",
+               "'Italian [i-ita]'","'German [i-deu]'", "'French [i-fra]'", 
+               "'Spanish [i-spa]'", "'English [i-eng]'")
+# prune the tree by dropping all other tips
+pruned.tree <- drop.tip(tree, setdiff(tree$tip.label, languages))
+# change tip labels
+plot(pruned.tree)
 ```
 
 # Simulate Brownian Motion along the Phylogenetic Tree
@@ -37,19 +44,19 @@ We here simulate the evolution of trait values (i.e. pseudo-complexity values in
 
 ```{r}
 # define variance of diffusion process
-sig2 = 0.01 # this variance setting is copied from Revell (2016) 
+sig2 = 2 # this variance setting is 0.01 in Revell (2016) 
 # define number of BM simulations
 nsim = 20
 # set the seed for random number generation in order to get the same result
 # when the code is re-run
-set.seed(1)
+set.seed(09012020)
 # simulate Brownian motion on a tree with fastBM()
-simulation <- fastBM(tree, mu = 0, sig2 = sig2, internal = F, nsim = nsim)
+simulation <- fastBM(pruned.tree, mu = 0, sig2 = sig2, internal = F, nsim = nsim)
 ```
 
 # Correlation Plots
-It is expected that the trait values for taxa which form a clade (i.e. language A and B) are positively correlated due to the shared history. While for trait values of taxa without shared history (i.e. language A and C and language B and C) there is no correlation expected. This can be checked with a correlation plot. Importantly, however, this does not mean that language A and B are expected to have average trait values which are different from the average trait value of C.
-```{r, width = 4, height = 5}
+It is expected that the trait values for taxa which are close on the tree (e.g. Spanish and French or English and Dutch) are positively correlated. This can be checked in the below correlation plot. However, significance of correlations depends on the number of data points simulated here.
+```{r, fig.width = 8, fig.height = 8}
 simulation.df <- as.data.frame(t(simulation)) 
 # the t() function is transposing the rows and columns
 cor.plot <- ggpairs(simulation.df, 
@@ -61,7 +68,7 @@ print(cor.plot)
 ```
 
 Safe figure to file.
-```{r, fig.width = 5, fig.height = 5}
+```{r, fig.width = 8, fig.height = 8}
 ggsave("Figures/BM_CorPlot.pdf", cor.plot, dpi = 300, scale = 1, 
        device = cairo_pdf)
 ```
@@ -71,7 +78,9 @@ Plot density distributions of BM generated pseudo-complexity measurements by lan
 
 Transform data frame from wide format to long format (this is necessary for later plotting and analyses by columns rather than rows).
 ```{r}
-simulation.df.long <- gather(simulation.df, key = language, value = value, Language_A:Language_C)
+# change column names
+colnames(simulation.df) <- c("Swedish", "English", "Dutch", "German", "French", "Italian", "Spanish", "Romanian")
+simulation.df.long <- gather(simulation.df, key = language, value = value, Swedish:Romanian)
 head(simulation.df.long)
 ```
 
@@ -86,7 +95,7 @@ sdev <- ddply(simulation.df.long, "language", summarise, grp.sd = sd(value, na.r
 ```
 
 Plot density distributions with indication of median (mean) values.
-```{r, fig.width = 7, fig.height = 2.5}
+```{r, fig.width = 6, fig.height = 5}
 density.plot <- ggplot(simulation.df.long, aes(x = value)) + 
  # histograms could be added as well here (or instead of the density distributions)
  # geom_histogram(aes(y = ..density..), colour = "white", fill = "light grey",
@@ -107,7 +116,7 @@ print(density.plot)
 ```
 
 Safe figure to file.
-```{r, fig.width = 7, fig.height = 2.5}
+```{r, fig.width = 6, fig.height = 5}
 ggsave("Figures/BM_simulation_densities.pdf", density.plot, dpi = 300, scale = 1, 
        device = cairo_pdf)
 ```
@@ -117,7 +126,7 @@ Give an overview of mean, median, and standard deviation values (i.e. values ref
 ```{r}
 stats.df <- cbind(mu, med[, 2], sdev[, 2])
 colnames(stats.df) <- c("language", "mu", "med", "sdev")
-stats.df.sorted <- stats.df[order(-stats.df$med), ]
+stats.df.sorted <- stats.df[order(stats.df$language), ]
 # round values to two decimal places,  the "-1" excludes column 1
 stats.df.sorted[, -1] <- round(stats.df.sorted[, -1], 2) 
 print(stats.df.sorted)
@@ -138,7 +147,7 @@ ggplot(simulation.df.long, aes(sample = value)) + stat_qq()
 # Statistical Tests
 Standard t-tests can be used to assess significant differences in the means of the pseudo-complexity distributions, if we assume that the underlying population distributions are normal. Wilcoxon tests are a non-parametric alternative, i.e. they do not make assumptions about the underlying population distribution (Crawley 2007, p. 283; Baayen 2008, p. 77). We here run pairwise t-tests. If we supply two data vectors, then by default the function pairwise.t.test() runs a Welch two sample t-test (for unpaired samples); with the argument "paired = T" a paired t-test is invoked. We here assume that our data consists of two vectors which are linked via the same measurement procedure(s), and we hence consider them "paired". A more general term is "related samples", which are defined as "two sets of data where a data point in one set has a pairwise relationship to a point in the other set of data" (Cahusac 2021, p. 56).
 
-P-value adjustment for multiple comparisons: In case of multiple testing, we should account for the fact that the likelihood of finding a significant result by chance increases with the number of statistical tests. One of the most conservative methods to account for this is the so-called Bonferroni correction, i.e. multiplying the p-values with the number of tests. This method assumes that tests are independent of one another (MacDonald 2014, p. 254-260). However, since we here compare, for example, language A to B and language A to C, there is dependence between the test results. We therefore apply the so-called Holm-Bonferroni method, which is less conservative. It does not assume independence between tests (see the descriptions in the vignette invoked by the command "?p.adjust()").
+P-value adjustment for multiple comparisons: In case of multiple testing, we should account for the fact that the likelihood of finding a significant result by chance increases with the number of statistical tests. One of the most conservative methods to account for this is the so-called Bonferroni correction, i.e. multiplying the p-values with the number of tests. This method assumes that tests are independent of one another (MacDonald 2014, p. 254-260). However, since we here compare, for example, French to Spanish and then French to German, there is dependence between the test results. We therefore apply the so-called Holm-Bonferroni method, which is less conservative. It does not assume independence between tests (see the descriptions in the vignette invoked by the command "?p.adjust()").
 
 ```{r}
 p.values <- pairwise.t.test(simulation.df.long$value, simulation.df.long$language, 
@@ -156,7 +165,7 @@ print(effect.sizes)
 
 ## Effect size heatmap
 Plot a heatmap with effect sizes to get a better overview.
-```{r, fig.width = 3, fig.height = 2}
+```{r, fig.width = 5, fig.height = 4}
 effect.sizes.plot <- ggplot(as.data.frame(effect.sizes), aes(group1, group2)) +
   geom_tile(aes(fill = abs(effsize)), color = "white") +
   scale_fill_gradient2(low = "light blue", mid = "light grey", high = "red", 
@@ -169,7 +178,7 @@ effect.sizes.plot
 ```
 
 Safe figure to file.
-```{r, fig.width = 3, fig.height = 2}
+```{r, fig.width = 5, fig.height = 4}
 ggsave("Figures/BMsimulation_effectSizes.pdf", effect.sizes.plot, dpi = 300, scale = 1, 
        device = cairo_pdf)
 ```
@@ -180,6 +189,8 @@ Note that the exact results of the tests above will differ every time the random
 # References
 Baayen, R. H. (2008). Analyzing linguistic data: A practical introduction using statistics in R. Cambridge University Press.
 
+Bentz, C., Dediu, D., Verkerk, A., Jäger, G. (2018 )The evolution of language families is shaped by the environment beyond neutral drift. Nat Hum Behav 2, 816–821. https://doi.org/10.1038/s41562-018-0457-6
+
 Cahusac, P. M. B. (2021). Evidence-based statistics. John Wiley & Sons.
 
 Crawley, M. J. (2007). The R book. John Wiley & Sons Ltd.
@@ -187,6 +198,8 @@ Crawley, M. J. (2007). The R book. John Wiley & Sons Ltd.
 Ehret, K. and B. Szmrecsanyi (2016). An information-theoretic approach to assess linguistic complexity. In: R. Baechler & G. Seiler (eds.), Complexity, Isolation, and Variation, 71-94. Berlin: de Gruyter.
 
 Harmon, L. (2019). Phylogenetic comparative methods. Online at https://lukejharmon.github.io/pcm/ (last accessed 25/11/2020).
+
+Jäger, G. (2018). Global-scale phylogenetic linguistic inference from lexical resources. Sci Data 5, 180189. https://doi.org/10.1038/sdata.2018.189
 
 Kruschke, J. K. (2012). Bayesian estimation supersedes the t test. Journal of Experimental Psychology.
 
