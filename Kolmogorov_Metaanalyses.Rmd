@@ -1,7 +1,7 @@
 ---
 title: 'Appendix 3: Meta-Analyses of Kolmogorov Complexity'
 author: "Chris Bentz"
-date: "January 14, 2021"
+date: "January 19, 2021"
 output:
   html_document: default
   pdf_document: default
@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Load Packages
 Load packages. If they are not installed yet on your local machine, use install.packages() to install them.
 ```{r, message = FALSE}
+library(readr)
 library(tidyr)
 library(ggplot2)
 library(plyr)
@@ -25,8 +26,8 @@ library(rstatix)
 # Load Data
 Load data file with morphological complexity estimations. These stem from an earlier project applying measures related to Kolmogorov complexity to parallel texts of "Alice in Wonderland". The data stems from the so-called "semi-parallel" analyses. In order to assess the variance of complexity estimations for different parts of the corpora, 10% of the sentences of each corpus were randomly drawn (this was repeated 1000 times). For further descriptions see Ehret & Szmrecsanyi (2016). 
 ```{r, message = FALSE}
-# the path to the file semialice_morphratios.csv needs to be individually specified here.
-results <- read.csv("~/Rstudio_code/IWMLC_Meaningfulness/semialice_morphratios.csv") 
+# Use the path to the file semialice_morphratios.csv in its raw format.
+results <- read_csv("https://raw.githubusercontent.com/IWMLC/complexityMeaning/main/semialice_morphratios.csv") 
 ```
 
 Give some simple statistics for this data frame of results.

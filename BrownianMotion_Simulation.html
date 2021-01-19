@@ -11,7 +11,7 @@
 
 <meta name="author" content="Chris Bentz" />
 
-<meta name="date" content="2021-01-14" />
+<meta name="date" content="2021-01-19" />
 
 <title>Appendix 2: Brownian Motion Simulation</title>
 
@@ -375,7 +375,7 @@ summary {
 
 <h1 class="title toc-ignore">Appendix 2: Brownian Motion Simulation</h1>
 <h4 class="author">Chris Bentz</h4>
-<h4 class="date">January 14, 2021</h4>
+<h4 class="date">January 19, 2021</h4>
 
 </div>
 
@@ -395,7 +395,7 @@ library(rstatix)</code></pre>
 <h1>Phylogenetic Tree</h1>
 <p>We here use an Indo-European phylogenetic tree from Bentz et al. (2018), which was built by using lexical items from word lists of the Automated Similarity Judgment Program (ASJP). For details on how such phylogenetic trees are automatically built see Jäger (2018).</p>
 <pre class="r"><code># load phylogenetic tree in newick format as a text file
-tree &lt;- read.newick(&quot;/home/chris/IENewickTree.txt&quot;)
+tree &lt;- read.newick(&quot;https://raw.githubusercontent.com/IWMLC/complexityMeaning/main/IENewickTree.txt&quot;)
 # choose the languages which are supposed to remain on the phylogeny
 languages &lt;- c(&quot;'Swedish [i-swe]'&quot;,&quot;'Dutch [i-nld]'&quot;,&quot;'Romanian [i-ron]'&quot;,
                &quot;'Italian [i-ita]'&quot;,&quot;'German [i-deu]'&quot;, &quot;'French [i-fra]'&quot;, 

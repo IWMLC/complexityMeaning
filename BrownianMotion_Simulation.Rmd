@@ -1,7 +1,7 @@
 ---
 title: "Appendix 2: Brownian Motion Simulation"
 author: "Chris Bentz"
-date: "January 14, 2021"
+date: "January 19, 2021"
 output:
   html_document: default
   pdf_document: default
@@ -28,7 +28,7 @@ We here use an Indo-European phylogenetic tree from Bentz et al. (2018), which w
 
 ```{r, fig.width = 5, fig.height = 5}
 # load phylogenetic tree in newick format as a text file
-tree <- read.newick("/home/chris/IENewickTree.txt")
+tree <- read.newick("https://raw.githubusercontent.com/IWMLC/complexityMeaning/main/IENewickTree.txt")
 # choose the languages which are supposed to remain on the phylogeny
 languages <- c("'Swedish [i-swe]'","'Dutch [i-nld]'","'Romanian [i-ron]'",
                "'Italian [i-ita]'","'German [i-deu]'", "'French [i-fra]'", 
