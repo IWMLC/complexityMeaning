@@ -1,15 +1,24 @@
 ---
 title: 'Appendix 3: Meta-Analyses of Kolmogorov Complexity'
 author: "Chris Bentz"
-date: "January 19, 2021"
+date: "January 20, 2021"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
   word_document: default
 ---
   
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Session Info
+Give the session info (reduced).
+```{r, echo = F}
+# R version
+sessionInfo()$R.version$version.string
+# platform
+sessionInfo()$R.version$platform 
 ```
 
 # Load Packages
@@ -21,6 +30,12 @@ library(ggplot2)
 library(plyr)
 library(scales)
 library(rstatix)
+```
+
+Give the package versions.
+```{r, echo = F}
+# version of packages loaded
+installed.packages()[names(sessionInfo()$otherPkgs), "Version"]
 ```
 
 # Load Data

@@ -1,7 +1,7 @@
 ---
 title: "Appendix 2: Brownian Motion Simulation"
 author: "Chris Bentz"
-date: "January 19, 2021"
+date: "January 20, 2021"
 output:
   html_document: default
   pdf_document: default
@@ -9,6 +9,15 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Session Info
+Give the session info (reduced).
+```{r, echo = F}
+# R version
+sessionInfo()$R.version$version.string
+# platform
+sessionInfo()$R.version$platform 
 ```
 
 # Load Packages
@@ -23,6 +32,13 @@ library(scales)
 library(rstatix)
 ```
 
+Give the package versions.
+```{r, echo = F}
+# version of packages loaded
+installed.packages()[names(sessionInfo()$otherPkgs), "Version"]
+```
+
+
 # Phylogenetic Tree
 We here use an Indo-European phylogenetic tree from Bentz et al. (2018), which was built by using lexical items from word lists of the Automated Similarity Judgment Program (ASJP). For details on how such phylogenetic trees are automatically built see Jäger (2018). 
 
@@ -36,7 +52,7 @@ languages <- c("'Swedish [i-swe]'","'Dutch [i-nld]'","'Romanian [i-ron]'",
 # prune the tree by dropping all other tips
 pruned.tree <- drop.tip(tree, setdiff(tree$tip.label, languages))
 # change tip labels
-plot(pruned.tree)
+  plot(pruned.tree)
 ```
 
 # Simulate Brownian Motion along the Phylogenetic Tree
@@ -184,7 +200,7 @@ ggsave("Figures/BMsimulation_effectSizes.pdf", effect.sizes.plot, dpi = 300, sca
 ```
 
 # Interpretation
-Note that the exact results of the tests above will differ every time the random vectors are re-sampled (which is avoided here by using the set.seed() function). Having said this, we do not seem to find any significant differences between the distributions of values generated along the branches of the tree by Brownian motion. In fact, it follows from the core properties of (the basic) Brownian motion model that the expected value of a trait at any time is equal to the value of the trait at time zero (Harmon 2019, p. 41). This means we should not expect to see significant differences in the average trait values (pseudo-complexities) of the languages in this simple simulation.
+Note that the exact results of the tests above will differ every time the random vectors are re-sampled (which is avoided here by using the set.seed() function). Having said this, we do not seem to find any significant differences between the distributions of values generated along the branches of the tree by Brownian motion. In fact, it follows from the core properties of (the basic) Brownian motion model that the expected value of a trait at any time is equal to the value of the trait at time zero (Harmon 2019, p. 41). This means we should not expect to see significant differences in the average trait values (pseudo-complexities) of the languages in this simple simulation. What we do expect, on the other hand, are positive correlations between closely related languages. For instance, if a given complexity measure yields a relatively high value for Italian, we would expect it to also yield a relatively high value for French (according to our phylogeny). Such correlations can indeed be observed in our Brownian motion simulation. 
 
 # References
 Baayen, R. H. (2008). Analyzing linguistic data: A practical introduction using statistics in R. Cambridge University Press.
