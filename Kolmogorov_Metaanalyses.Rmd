@@ -108,7 +108,7 @@ density.plot <- ggplot(results.long, aes(x = value)) +
 print(density.plot)
 ```
 
-Safe figure to file.
+Save figure to file.
 ```{r, fig.width = 8, fig.height = 5}
 ggsave("Figures/kolmogorov_densities.pdf", density.plot, dpi = 300, scale = 1, 
        device = cairo_pdf)
@@ -171,7 +171,7 @@ effect.sizes.plot <- ggplot(as.data.frame(effect.sizes), aes(group1, group2)) +
 effect.sizes.plot
 ```
 
-Safe figure to file.
+Save figure to file.
 ```{r, fig.width = 6, fig.height = 5}
 ggsave("Figures/kolmogorov_effectSizes.pdf", effect.sizes.plot, dpi = 300, scale = 1, 
        device = cairo_pdf)

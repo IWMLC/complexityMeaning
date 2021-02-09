@@ -83,7 +83,7 @@ cor.plot <- ggpairs(simulation.df,
 print(cor.plot)
 ```
 
-Safe figure to file.
+Save figure to file.
 ```{r, fig.width = 8, fig.height = 8}
 ggsave("Figures/BM_CorPlot.pdf", cor.plot, dpi = 300, scale = 1, 
        device = cairo_pdf)
@@ -131,7 +131,7 @@ density.plot <- ggplot(simulation.df.long, aes(x = value)) +
 print(density.plot)
 ```
 
-Safe figure to file.
+Save figure to file.
 ```{r, fig.width = 6, fig.height = 5}
 ggsave("Figures/BM_simulation_densities.pdf", density.plot, dpi = 300, scale = 1, 
        device = cairo_pdf)
@@ -193,7 +193,7 @@ effect.sizes.plot <- ggplot(as.data.frame(effect.sizes), aes(group1, group2)) +
 effect.sizes.plot
 ```
 
-Safe figure to file.
+Save figure to file.
 ```{r, fig.width = 5, fig.height = 4}
 ggsave("Figures/BMsimulation_effectSizes.pdf", effect.sizes.plot, dpi = 300, scale = 1, 
        device = cairo_pdf)

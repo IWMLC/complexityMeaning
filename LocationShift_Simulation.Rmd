@@ -92,7 +92,7 @@ density.plot <- ggplot(simulation.df, aes(x = value)) +
 print(density.plot)
 ```
 
-Safe figure to file.
+Save figure to file.
 ```{r, fig.width = 7, fig.height = 2.5}
 ggsave("Figures/simulation_densities.pdf", density.plot, dpi = 300, scale = 1, 
        device = cairo_pdf)
@@ -154,7 +154,7 @@ effect.sizes.plot <- ggplot(as.data.frame(effect.sizes), aes(group1, group2)) +
 effect.sizes.plot
 ```
 
-Safe figure to file.
+Save figure to file.
 ```{r, fig.width = 3, fig.height = 2}
 ggsave("Figures/simulation_effectSizes.pdf", effect.sizes.plot, dpi = 300, scale = 1, 
        device = cairo_pdf)
