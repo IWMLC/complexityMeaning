@@ -1,10 +1,10 @@
 ---
 title: "Appendix 2: Brownian Motion Simulation"
 author: "Chris Bentz"
-date: "January 20, 2021"
+date: "March 09, 2021"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -37,7 +37,6 @@ Give the package versions.
 # version of packages loaded
 installed.packages()[names(sessionInfo()$otherPkgs), "Version"]
 ```
-
 
 # Phylogenetic Tree
 We here use an Indo-European phylogenetic tree from Bentz et al. (2018), which was built by using lexical items from word lists of the Automated Similarity Judgment Program (ASJP). For details on how such phylogenetic trees are automatically built see Jäger (2018). 
@@ -118,7 +117,7 @@ density.plot <- ggplot(simulation.df.long, aes(x = value)) +
                 # binwidth = 0.1) + 
  geom_density(alpha = .2, fill = "grey", color = "darkgrey") +
  geom_jitter(data = simulation.df.long, aes(x = value, y = 0), 
-             size = 1, height = 0.1, width = 0) + # add some jitter to prevent overplotting 
+             size = 0.7, height = 0.03, width = 0) + # add some jitter to prevent overplotting 
  facet_wrap(~ language) +
  # geom_vline(data = mu, aes(xintercept=grp.mean),
  #          linetype = "dotted", color = "blue") +
@@ -172,8 +171,7 @@ p.values
 ```
 
 ## Effect sizes
-Statistical significance is only one part of the story. For instance, a difference in complexity values might be statistically significant, but so small that it is negligible for any theorizing. In fact, it is sometimes argued that effect sizes - rather than p-values - should be the aim of statistical inquiry (Cahusac 2020, p. 12-15). An overview of effect size measures per statistical test is given in Patil (2020). In conjunction with the t-test we here use Cohen's d (i.e. function cohens_d() of the "rstatix" package). (Note: the d estimate given by this function can be negative. However, the sign is not relevant here, only the absolute value.) 
-
+Statistical significance is only one part of the story. For instance, a difference in complexity values might be statistically significant, but so small that it is negligible for any theorizing. In fact, it is sometimes argued that effect sizes -- rather than p-values -- should be the aim of statistical inquiry (Cahusac 2020, p. 12-15). An overview of effect size measures per statistical test is given in Patil (2020). In conjunction with the t-test we here use Cohen's d (i.e. function cohens_d() of the "rstatix" package). (Note: the d estimate given by this function can be negative. However, the sign is not relevant here, only the absolute value.) 
 ```{r}
 effect.sizes <- cohens_d(simulation.df.long, value ~ language, paired = T)
 print(effect.sizes)
@@ -185,7 +183,7 @@ Plot a heatmap with effect sizes to get a better overview.
 effect.sizes.plot <- ggplot(as.data.frame(effect.sizes), aes(group1, group2)) +
   geom_tile(aes(fill = abs(effsize)), color = "white") +
   scale_fill_gradient2(low = "light blue", mid = "light grey", high = "red", 
-                       midpoint = 0.5, limit = c(0,1.5)) +
+                       midpoint = 0.5, limit = c(0, 2.5)) +
   geom_text(aes(label = round(abs(effsize), 2))) +
   labs(x = "", y = "") +
   theme_minimal() +
@@ -211,13 +209,9 @@ Cahusac, P. M. B. (2021). Evidence-based statistics. John Wiley & Sons.
 
 Crawley, M. J. (2007). The R book. John Wiley & Sons Ltd.
 
-Ehret, K. and B. Szmrecsanyi (2016). An information-theoretic approach to assess linguistic complexity. In: R. Baechler & G. Seiler (eds.), Complexity, Isolation, and Variation, 71-94. Berlin: de Gruyter.
-
 Harmon, L. (2019). Phylogenetic comparative methods. Online at https://lukejharmon.github.io/pcm/ (last accessed 25/11/2020).
 
 Jäger, G. (2018). Global-scale phylogenetic linguistic inference from lexical resources. Sci Data 5, 180189. https://doi.org/10.1038/sdata.2018.189
-
-Kruschke, J. K. (2012). Bayesian estimation supersedes the t test. Journal of Experimental Psychology.
 
 Lumley et al. (2002). The importants of the normality assumption in large public health data sets. Annu. Rev. Public Health.
 

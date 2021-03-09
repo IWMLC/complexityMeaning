@@ -1,14 +1,13 @@
 ---
 title: 'Appendix 1: Simulation Study with Normal Distribution and Location Shift'
 author: "Chris Bentz"
-date: "January 20, 2021"
+date: "March 09, 2021"
 output:
-  html_document: default
   pdf_document: default
-  word_document: default
+  html_document: default
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -79,7 +78,7 @@ density.plot <- ggplot(simulation.df, aes(x = value)) +
                 # binwidth = 0.1) + 
  geom_density(alpha = .2, fill = "grey", color = "darkgrey") +
  geom_jitter(data = simulation.df, aes(x = value, y = 0), 
-             size = 1, height = 0.03, width = 0) + # add some jitter to prevent overplotting
+             size = 0.7, height = 0.03, width = 0) + # add some jitter to prevent overplotting
  facet_wrap(~ language) +
  # geom_vline(data = mu, aes(xintercept=grp.mean),
  #          linetype = "dotted", color = "blue") +
@@ -122,7 +121,7 @@ ggplot(simulation.df, aes(sample = value)) + stat_qq()
 ```
 
 # Statistical Tests
-Standard t-tests can be used to assess significant differences in the means of the pseudo-complexity distributions, if we assume that the underlying population distributions are normal. Wilcoxon tests are a non-parametric alternative, i.e. they do not make assumptions about the underlying population distribution (Crawley 2007, p. 283; Baayen 2008, p. 77). We here run pairwise t-tests for illustration purposes. If we supply two data vectors, then by default the function pairwise.t.test() runs a Welch two sample t-test (for unpaired samples); with the argument "paired = T" a paired t-test is invoked. We here assume that our data consists of two vectors which are linked via the same measurement procedure(s), and we hence consider them "paired". A more general term is "related samples", which are defined as "two sets of data where a data point in one set has a pairwise relationship to a point in the other set of data" (Cahusac 2021, p. 56).
+Standard t-tests can be used to assess significant differences in the means of the pseudo-complexity distributions, if we assume that the underlying population distributions are normal. Wilcoxon tests are a non-parametric alternative, i.e. they do not make assumptions about the underlying population distribution (Crawley 2007, p. 283; Baayen 2008, p. 77). We here run pairwise t-tests for illustration purposes. If we supply two data samples, then by default the function pairwise.t.test() runs a Welch two sample t-test (for unpaired samples); with the argument "paired = T" a paired t-test is invoked. We here assume that our data consists of three samples which are linked via the same measurement procedure (here randomly generated), and we hence consider them "paired". A more general term is "related samples", which are defined as "two sets of data where a data point in one set has a pairwise relationship to a point in the other set of data" (Cahusac 2021, p. 56).
 
 P-value adjustment for multiple comparisons: In case of multiple testing, we should account for the fact that the likelihood of finding a significant result by chance increases with the number of statistical tests. One of the most conservative methods to account for this is the so-called Bonferroni correction, i.e. multiplying the p-values with the number of tests. This method assumes that tests are independent of one another (MacDonald 2014, p. 254-260). However, since we here compare, for example, language A to B and language A to C, there is dependence between the test results. We therefore apply the so-called Holm-Bonferroni method, which is less conservative. It does not assume independence between tests (see the descriptions in the vignette invoked by the command "?p.adjust()").
 
@@ -133,7 +132,7 @@ p.values
 ```
 
 ## Effect sizes
-Statistical significance is only one part of the story. For instance, a difference in complexity values might be statistically significant, but so small that it is negligible for any theorizing. In fact, it is sometimes argued that effect sizes - rather than p-values - should be the aim of statistical inquiry (Cahusac 2020, p. 12-15). An overview of effect size measures per statistical test is given in Patil (2020). In conjunction with the t-test we here use Cohen's d (i.e. function cohens_d() of the "rstatix" package). (Note: the d estimate given by this function can be negative. However, the sign is not relevant here, only the absolute value.) 
+Statistical significance is only one part of the story. For instance, a difference in complexity values might be statistically significant, but so small that it is negligible for any theorizing. In fact, it is sometimes argued that effect sizes -- rather than p-values -- should be the aim of statistical inquiry (Cahusac 2020, p. 12-15). An overview of effect size measures per statistical test is given in Patil (2020). In conjunction with the t-test we here use Cohen's d (i.e. function cohens_d() of the "rstatix" package). (Note: the d estimate given by this function can be negative. However, the sign is not relevant here, only the absolute value.) 
 
 ```{r}
 effect.sizes <- cohens_d(simulation.df, value ~ language, paired = T)
@@ -146,7 +145,7 @@ Plot a heatmap with effect sizes to get a better overview.
 effect.sizes.plot <- ggplot(as.data.frame(effect.sizes), aes(group1, group2)) +
   geom_tile(aes(fill = abs(effsize)), color = "white") +
   scale_fill_gradient2(low = "light blue", mid = "light grey", high = "red", 
-                       midpoint = 0.5, limit = c(0,1.5)) +
+                       midpoint = 0.5, limit = c(0, 2.5)) +
   geom_text(aes(label = round(abs(effsize), 2))) +
   labs(x = "", y = "") +
   theme_minimal() +
@@ -171,12 +170,10 @@ We would thus conclude that language A and B have the same complexity, while C h
 ## Effect size
 If we have found a significant location shift in the distributions, the question is how strong this shift (i.e. "effect") is. In this particular example, we used Cohen's d as an effect size measure. The effect is typically considered "small" when d < 0.2, "medium" when 0.2 < d < 0.8, and "large" when d > 0.8. Sometimes "very large" is attributed to d > 1.3 (Cahusac 2021, p. 14). 
 
-For the simulated data above, the effect between A and B is typically "negligible" or "small", and the effect between A and C as well as B and C "large". Note that the expected location shift of C compared to A and B is 1 standard deviation. 
+For the simulated data above, the effect between A and B is typically "negligible" or "small", and the effect between A and C as well as B and C "large". Note that the expected location shift of C compared to A and B is exactly one standard deviation. 
 
 ## Alternative statistical approaches
-We here used so-called "frequentist" statistical tests. A common alternative are Bayesian statistics. For the t-test, for instance, there is a Bayesian alternative proposed in Kruschke (2012). Another, less widespread alternative, are tests in the framework of "evidence-based" statistics 
-which are based on likelihood ratios for competing hypotheses (see Cahusac, 2021, pp. 7 for a discussion). While different researchers might prefer different statistical approaches, Cahusac (2021, p. 8) states that: "If the collected data are not strongly influenced by prior considerations,
-it is somewhat reassuring that the three approaches usually reach the same conclusion."
+We here used so-called "frequentist" statistical tests. A common alternative are Bayesian statistics. For the t-test, for instance, there is a Bayesian alternative proposed in Kruschke (2012). Another, less widespread alternative, are tests in the framework of "evidence-based" statistics which are based on likelihood ratios for competing hypotheses (see Cahusac, 2021, pp. 7 for a discussion). While different researchers might prefer different statistical approaches, Cahusac (2021, p. 8) states that: "If the collected data are not strongly influenced by prior considerations, it is somewhat reassuring that the three approaches usually reach the same conclusion."
 
 # References
 Baayen, R. H. (2008). Analyzing linguistic data: A practical introduction using statistics in R. Cambridge University Press.

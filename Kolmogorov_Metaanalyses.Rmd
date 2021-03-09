@@ -5,10 +5,9 @@ date: "March 09, 2021"
 output:
   pdf_document: default
   html_document: default
-  word_document: default
 ---
   
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -48,26 +47,12 @@ results <- read_csv("https://raw.githubusercontent.com/IWMLC/complexityMeaning/m
 Give some simple statistics for this data frame of results.
 ```{r}
 length(unique(results$language)) # i.e. number of different languages
-ncol(results)-1 # i.e. number of complexity measurements
 ```
 
 # Data Pre-Processing
-Select columns (i.e. number of repeated measurements). We might use all 1000 repeated measurements per language. However, in order to not inflate the number of data points artificially we might also just choose a subset of the measurements.
-```{r}
-results.short <- results[2:21]
-#head(results.short)
-```
-
 Scale all numerical columns to make them more commensurable.
 ```{r}
-results.scaled <- cbind(results[1], scale(results.short))
-```
-
-Transform data frame from wide format to long format (this is necessary for later plotting and analyses by columns rather than rows).
-```{r}
-results.long <- gather(results.scaled, key = measure, 
-                       value = value, morphratio.1:tail(names(results.scaled), 1))
-head(results.long)
+results.scaled <- cbind(results[1:2], scale(results[3:6]))
 ```
 
 # Density Distributions
@@ -76,27 +61,21 @@ Plot density distributions of complexity measurements by language. Individual me
 Get mean, median, and standard deviation values.
 ```{r}
 # get mean values for each language 
-mu <- ddply(results.long, "language", summarise, grp.mean = mean(value, na.rm = T)) 
+mu <- ddply(results.scaled, "language", summarise, grp.mean = mean(morphratio, na.rm = T)) 
  # get median values for each language
-med <- ddply(results.long, "language", summarise, grp.median = median(value, na.rm = T))
+med <- ddply(results.scaled, "language", summarise, grp.median = median(morphratio, na.rm = T))
  # get standard deviation values for each language
-sdev <- ddply(results.long, "language", summarise, grp.sd = sd(value, na.rm = T))
-```
-
-Choose particular languages to plot (if necessary).
-```{r}
-#selection <- c("french", "spanish", "english")
-#results.long.selected <- results.long[results.long$language %in% selection, ]
+sdev <- ddply(results.scaled, "language", summarise, grp.sd = sd(morphratio, na.rm = T))
 ```
 
 Plot density distributions with indication of central tendency.
 ```{r, fig.width = 8, fig.height = 5}
-density.plot <- ggplot(results.long, aes(x = value)) + 
+density.plot <- ggplot(results.scaled, aes(x = morphratio)) + 
  #geom_histogram(aes(y = ..density..), colour = "black", fill = "light grey",
                 #binwidth = 0.1) +
  geom_density(alpha = .2, fill = "grey", color = "darkgrey") +
- geom_jitter(data = results.long, aes(x = value, y = 0), 
-             size = 0.5, height = 0.1, width = 0) +
+ geom_jitter(data = results.scaled, aes(x = morphratio, y = 0), 
+             size = 0.7, height = 0.03, width = 0) +
  facet_wrap(~ language) +
  #geom_vline(data = mu, aes(xintercept=grp.mean),
  #          linetype = "dotted") +
@@ -134,26 +113,26 @@ write.csv(stats.df.sorted, file = "Tables/kolmogorov_descriptiveStats.csv", row.
 The assumption that the tested data stems from a normally distributed population is often necessary for the mathematical proofs underlying standard statistical techniques. We might apply normality tests to check for this assumption (e.g. Baayen 2008, p. 73), but some statisticians advice against such pre-tests, since they are often too sensitive (MacDonald 2014, p. 133-136, Rasch et al. (2020), p. 67). In fact, Rasch et al. (2020, p. xi) argue based on earlier simulation studies that almost all standard statistical tests are fairly robust against deviations from normality. In a similar vein, Lumley et al. (2009) argue that non-normality of the data is a negligible issue with the t-test, at least for larger sample sizes, e.g. >= 100. However, especially for smaller sample sizes, it is still advisable to check for gross deviations from normality in the data. One common way of doing this is quantile-quantile plots. The points should here roughly follow a straight line (Crawley 2007, p. 281).
 
 ```{r, fig.width = 3.5, fig.height = 3}
-ggplot(results.long, aes(sample = value)) + 
+ggplot(results.scaled, aes(sample = morphratio)) + 
   stat_qq()
 ```
 
 # Statistical tests
 Select a statistical test:
-Standard t-tests can be used to assess significant differences in the means of the pseudo-complexity distributions, if we assume that the underlying population distributions are normal. Wilcoxon tests are a non-parametric alternative, i.e. they do not make assumptions about the underlying population distribution, e.g. normality (Crawley 2007, p. 283; Baayen 2008, p. 77). Since there are some deviations from normality visible in the QQ-Plot above, we here choose a Wilcoxon test. If we supply two data vectors, then by default the command wilcox.test() runs a Wilcoxon rank sum test (for unpaired samples), and with "paired = T" a Wilcoxon signed rank test. Note that the same measurement procedure was used here across different languages (and corresponding text samples) to assess morphological complexity. We thus consider the resulting vectors "paired". A more general term is "related samples", which are defined as "two sets of data where a data point in one set has a pairwise relationship to a point in the other set of data" (Cahusac 2021, p. 56). Note that pairwise.wilcox.test() is a function of the R-core stats package which runs multiple tests, i.e. for all groups in the "language" column in our case.
+Standard t-tests can be used to assess significant differences in the means of complexity distributions, if we assume that the underlying population distributions are normal. Wilcoxon tests are a non-parametric alternative, i.e. they do not make assumptions about the underlying population distribution, e.g. normality (Crawley 2007, p. 283; Baayen 2008, p. 77). Since there are few deviations from normality visible in the QQ-plot above, we here run pairwise t-tests. If we supply two data vectors, then by default the function pairwise.t.test() runs a Welch two sample t-test (for unpaired samples); with the argument "paired = T" a paired t-test is invoked. Here our data consists of several samples (i.e. by language) which are linked via the same measurement procedure (i.e. Kolmogorov morphological complexity), and we hence consider them "paired". A more general term is "related samples", which are defined as "two sets of data where a data point in one set has a pairwise relationship to a point in the other set of data" (Cahusac 2021, p. 56). 
 
 P-value adjustment for multiple comparisons:
 In case of multiple testing, we should account for the fact that the likelihood of finding a significant result by chance increases with the number of statistical tests. One of the most conservative methods to account for this is the so-called Bonferroni correction, i.e. multiplying the p-values with the number of tests. This method assumes that tests are independent of one another (MacDonald 2014, p. 254-260). Since we here run pairwise tests by languages, our tests are not independent (the same language is tested against others multiple times). We therefore apply the so-called Holm-Bonferroni method, which is less conservative. It does not assume independence between tests (see the descriptions in the vignette invoked by the command "?p.adjust()") . 
 ```{r}
-p.values <- pairwise.wilcox.test(results.long$value, results.long$language, 
+p.values <- pairwise.t.test(results.scaled$morphratio, results.scaled$language, 
                      paired = T, p.adjust.method = "holm") 
 p.values
 ```
 
 ## Effect Size
-Statistical significance is only one part of the story. For instance, a difference in complexity values might be statistically significant, but so small that it is negligible for any theorizing. In fact, it is sometimes argued that effect sizes - rather than p-values - should be the aim of statistical inquiry (Cahusac 2020, p. 12-15). An overview of effect size measures per statistical test is given in Patil (2020). In conjunction with the Wilcoxon signed rank test we here use the statistic r (i.e. function wilcox_effsize() of the "rstatix" package). 
+Statistical significance is only one part of the story. For instance, a difference in complexity values might be statistically significant, but so small that it is negligible for any theorizing. In fact, it is sometimes argued that effect sizes -- rather than p-values -- should be the aim of statistical inquiry (Cahusac 2020, p. 12-15). An overview of effect size measures per statistical test is given in Patil (2020). In conjunction with the t-test we here use Cohen's d (i.e. function cohens_d() of the "rstatix" package). (Note: the d estimate given by this function can be negative. However, the sign is not relevant here, only the absolute value.) 
 ```{r}
-effect.sizes <- wilcox_effsize(results.long, value ~ language, paired = T)
+effect.sizes <- cohens_d(results.scaled, morphratio ~ language, paired = T)
 print(effect.sizes)
 ```
 
@@ -161,10 +140,10 @@ print(effect.sizes)
 Plot a heatmap with effect sizes to get a better overview.
 ```{r, fig.width = 6, fig.height = 5}
 effect.sizes.plot <- ggplot(as.data.frame(effect.sizes), aes(group1, group2)) +
-  geom_tile(aes(fill = effsize), color = "white") +
+  geom_tile(aes(fill = abs(effsize)), color = "white") +
   scale_fill_gradient2(low = "light blue", mid = "light grey", high = "red", 
-                       midpoint = 0.5, limit = c(0,1)) +
-  geom_text(aes(label = round(effsize, 2))) +
+                       midpoint = 0.5, limit = c(0, 2.5)) +
+  geom_text(aes(label = round(abs(effsize), 2))) +
   labs(x = "", y = "") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -180,17 +159,13 @@ ggsave("Figures/kolmogorov_effectSizes.pdf", effect.sizes.plot, dpi = 300, scale
 # Interpretation
 
 ## Descriptive Statistics
-The language with highest median morphological complexity in this sample is Finnish. The language with the lowest median value is German. All other languages range in between these two extremes, with French, Italian, and Spanish having the smallest difference in median values.   
+The languages with the highest median morphological complexities in this sample are Hungarian and Finnish. The languages with the lowest median values are English and German. All other languages range in between these two extremes.   
 
 ## Statistical significance
-For most pairwise Wilcoxon tests we find p < 0.05. Some exceptions are the tests between Spanish, French and Italian, the test between German and English, as well as the test between Hungarian and Romanian. In other words, based on our data we should reject the null hypothesis that pairwise complexity differences are 0 in most cases. This holds for this particular number of data points (n = 20). In fact, if we included more data points then the pairwise differences could become significantly different from 0 also for the as yet non-significant pairs (as you can test by just adding more columns in the pre-processing code above). The dependence of p-values on the number of data points is sometimes taken as an argument against so-called "frequentist" statistics. However, this is why it is important to include a measure of effect size.    
+For most pairwise t-tests we find p < 0.05. Some exceptions are the tests between Spanish, French and Italian, the test between German and English, as well as the test between Hungarian and Romanian. In other words, based on our data we should reject the null hypothesis that pairwise complexity differences are 0 in most cases. This holds for this particular number of data points (n = 20). In fact, if we included more data points then the pairwise differences could become significantly different from 0 also for the as yet non-significant pairs. The dependence of p-values on the number of data points is sometimes taken as an argument against so-called "frequentist" statistics. However, this issue can also be encountered by including measures of effect size.    
 
 ## Effect size
-The r measure of effect size for many pairwise comparisons is 0.88 (which suggests that this number is a practical upper limit somewhat lower than the theoretical upper limit of 1). For Spanish compared to Italian and French it is lowest with 0.01 (we can disregard the minus sign here and look at the absolute values). According to Patil (2020) the r measure is in the range [0,1], and the yardstick for interpreting effect sizes is: 0.1-0.3 "small", 0.3-0.5 "medium", and > 0.5 "large". We would thus conclude that the difference between morphological complexities is large for most pairs of languages, while for some it is small or medium. 
-
-## Alternative statistical approaches
-We here used so-called "frequentist" statistical tests. A common alternative are Bayesian statistics. For the t-test, for instance, there is a Bayesian alternative proposed in Kruschke (2012). Another, less widespread alternative, are tests in the framework of "evidence-based" statistics which are based on likelihood ratios for competing hypotheses (see Cahusac, 2021, pp. 7 for a discussion). While different researchers might prefer different statistical approaches, Cahusac (2021, p. 8) states that: "If the collected data are not strongly influenced by prior considerations,
-it is somewhat reassuring that the three approaches usually reach the same conclusion."
+Using Cohen's d as a measure of effect size, an effect is typically considered "small" when d < 0.2, "medium" when 0.2 < d < 0.8, and "large" when d > 0.8. Sometimes "very large" is attributed to d > 1.3 (Cahusac 2021, p. 14). In our empirical data of morphological complexity measurements we find everything from negligible to very large effect sizes. For example, the difference between Italian and Spanish has an effect size of virtually zero, while the effect size is small between Swedish and Dutch (0.17), medium between French and Swedish (0.45), large between Spanish and Hungarian (1.03), and very large between English and Finnish (2.27).  
 
 # References
 Baayen, R. H. (2008). Analyzing linguistic data: A practical introduction using statistics in R. Cambridge University Press.
@@ -201,8 +176,6 @@ Crawley, M. J. (2007). The R book. John Wiley & Sons Ltd.
 
 Ehret, K. and B. Szmrecsanyi (2016). An information-theoretic approach to assess linguistic complexity. In: R. Baechler & G. Seiler (eds.), Complexity, Isolation, and Variation, 71-94. Berlin: de Gruyter.
 
-Kruschke, J. K. (2012). Bayesian estimation supersedes the t test. Journal of Experimental Psychology.
-
 Lumley et al. (2002). The importants of the normality assumption in large public health data sets. Annu. Rev. Public Health.
 
 McDonald, J.H. (2014). Handbook of Biological Statistics (3rd ed.). Sparky House Publishing, Baltimore, Maryland. online at http://www.biostathandbook.com
@@ -211,3 +184,4 @@ Patil, I. (2020). Test and effect size details. online at https://cran.r-project
 
 Rasch, D., Verdooren, R., and J. Pilz (2020). Applied statistics. Theory and problem solutions with R. John Wiley & Sons Ltd.
 
+---
