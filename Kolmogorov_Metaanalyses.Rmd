@@ -42,7 +42,7 @@ installed.packages()[names(sessionInfo()$otherPkgs), "Version"]
 Load data file with morphological complexity estimations. These stem from an earlier project applying measures related to Kolmogorov complexity to parallel texts of "Alice in Wonderland". For further descriptions of the measure see Ehret & Szmrecsanyi (2016). In order to assess the variance of complexity estimations for different parts of the corpora, 20 chunks of 80 sentences each were created from the original text file of each language. 
 ```{r, message = FALSE}
 # Use the path to the file semialice_morphratios.csv in its raw format.
-results <- read_csv("https://raw.githubusercontent.com/IWMLC/complexityMeaning/main/semialice_morphratios.csv") 
+results <- read_csv("https://raw.githubusercontent.com/IWMLC/complexityMeaning/main/semialice_morphratios.csv")
 ```
 
 Give some simple statistics for this data frame of results.
